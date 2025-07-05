@@ -1,0 +1,138 @@
+### Arquivo de testes da API - Arquitetura Hexagonal
+### Certifique-se de que o servidor esteja rodando: npm run dev
+
+####################
+# HEALTH CHECK
+####################
+
+### Health Check - Verificar se o servidor está rodando
+GET http://localhost:3000/health
+
+####################
+# CRIAR USUÁRIOS
+####################
+
+### Criar usuário válido 1
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "name": "Thiago S Adriano",
+  "email": "thiagoadriano@fiap.com.br"
+}
+
+### Criar usuário válido 2
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "name": "Maria Santos",
+  "email": "maria@email.com"
+}
+
+### Criar usuário válido 3
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "name": "Thiago S Adriano",
+  "email": "thiagoadriano@fiap.com.br"
+}
+
+####################
+# LISTAR USUÁRIOS
+####################
+
+### Listar todos os usuários
+GET http://localhost:3000/api/users
+
+####################
+# BUSCAR USUÁRIO POR ID
+####################
+
+### Buscar usuário por ID específico
+# NOTA: Substitua {id} pelo ID retornado na criação do usuário
+GET http://localhost:3000/api/users/{id}
+
+### Buscar usuário que não existe
+GET http://localhost:3000/api/users/inexistente
+
+####################
+# TESTES DE VALIDAÇÃO
+####################
+
+### Tentar criar usuário sem nome
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "email": "semNome@email.com"
+}
+
+### Tentar criar usuário sem email
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "name": "João Sem Email"
+}
+
+### Tentar criar usuário com nome vazio
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "name": "",
+  "email": "nomeVazio@email.com"
+}
+
+### Tentar criar usuário com email inválido
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "name": "João Email Inválido",
+  "email": "email-invalido"
+}
+
+### Tentar criar usuário com email duplicado
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "name": "João Duplicado",
+  "email": "joao@email.com"
+}
+
+####################
+# CASOS DE TESTE EXTRAS
+####################
+
+### Criar usuário com email em maiúsculo (deve normalizar)
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "name": "Ana Paula",
+  "email": "ANA@EMAIL.COM"
+}
+
+### Criar usuário com nome com espaços extras (deve normalizar)
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "name": "  Pedro   Silva  ",
+  "email": "pedro@email.com"
+}
+
+### Tentar criar usuário com campos vazios
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "name": "   ",
+  "email": "   "
+}
+
+ 
