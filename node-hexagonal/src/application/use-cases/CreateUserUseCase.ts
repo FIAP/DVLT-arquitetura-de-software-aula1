@@ -2,23 +2,12 @@ import { v4 as uuidv4 } from 'uuid';
 import { User } from '../../domain/entities/User';
 import { UserRepository } from '../../domain/repositories/UserRepository';
 import { UserService } from '../../domain/services/UserService';
+import { CreateUserPort, CreateUserRequest, CreateUserResponse } from '../ports/UserUseCasesPorts';
 
-export interface CreateUserRequest {
-  name: string;
-  email: string;
-}
-
-export interface CreateUserResponse {
-  id: string;
-  name: string;
-  email: string;
-  createdAt: Date;
-}
-
-export class CreateUserUseCase {
+export class CreateUserUseCase implements CreateUserPort {
   constructor(
-    private userRepository: UserRepository,
-    private userService: UserService
+    private readonly userRepository: UserRepository,
+    private readonly userService: UserService
   ) {}
 
   async execute(request: CreateUserRequest): Promise<CreateUserResponse> {

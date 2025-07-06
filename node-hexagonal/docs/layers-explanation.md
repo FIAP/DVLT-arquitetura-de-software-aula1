@@ -77,10 +77,10 @@ src/application/
 
 ### Exemplo: CreateUserUseCase
 ```typescript
-export class CreateUserUseCase {
+export class CreateUserUseCase implements CreateUserPort { // ← Implementa Primary Port
   constructor(
-    private userRepository: UserRepository,
-    private userService: UserService
+    private readonly userRepository: UserRepository,   // ← Secondary Port (Interface)
+    private readonly userService: UserService
   ) {}
 
   async execute(request: CreateUserRequest): Promise<CreateUserResponse> {
@@ -140,9 +140,9 @@ src/infrastructure/
 ```typescript
 export class UserController {
   constructor(
-    private createUserUseCase: CreateUserUseCase,
-    private getUserUseCase: GetUserUseCase,
-    private listUsersUseCase: ListUsersUseCase
+    private readonly createUserPort: CreateUserPort,  // ← Primary Port (Interface)
+    private readonly getUserPort: GetUserPort,        // ← Primary Port (Interface)
+    private readonly listUsersPort: ListUsersPort     // ← Primary Port (Interface)
   ) {}
 
   async createUser(req: Request, res: Response): Promise<void> {
@@ -156,7 +156,7 @@ export class UserController {
         return;
       }
 
-      const user = await this.createUserUseCase.execute({ name, email });
+      const user = await this.createUserPort.execute({ name, email });  // ← Usando interface
       
       res.status(201).json(user);
     } catch (error) {
@@ -186,7 +186,9 @@ Infrastructure → Application → Domain
 - **Infraestrutura** implementa essas interfaces
 - **Aplicação** usa as interfaces, não as implementações
 
-### Exemplo de Inversão
+### Exemplo de Inversão de Dependências
+
+#### Secondary Ports (Output)
 ```typescript
 // ❌ Dependência direta (acoplamento)
 class CreateUserUseCase {
@@ -195,7 +197,20 @@ class CreateUserUseCase {
 
 // ✅ Inversão de dependência (desacoplamento)
 class CreateUserUseCase {
-  constructor(private userRepository: UserRepository) {} // Interface
+  constructor(private readonly userRepository: UserRepository) {} // ← Interface
+}
+```
+
+#### Primary Ports (Input)
+```typescript
+// ❌ Primary Adapter depende de implementação concreta
+class UserController {
+  constructor(private createUserUseCase: CreateUserUseCase) {}
+}
+
+// ✅ Primary Adapter depende de interface (IoC completo)
+class UserController {
+  constructor(private readonly createUserPort: CreateUserPort) {} // ← Interface
 }
 ```
 

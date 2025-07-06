@@ -1,13 +1,11 @@
 import { Request, Response } from 'express';
-import { CreateUserUseCase } from '../../../application/use-cases/CreateUserUseCase';
-import { GetUserUseCase } from '../../../application/use-cases/GetUserUseCase';
-import { ListUsersUseCase } from '../../../application/use-cases/ListUsersUseCase';
+import { CreateUserPort, GetUserPort, ListUsersPort } from '../../../application/ports/UserUseCasesPorts';
 
 export class UserController {
   constructor(
-    private createUserUseCase: CreateUserUseCase,
-    private getUserUseCase: GetUserUseCase,
-    private listUsersUseCase: ListUsersUseCase
+    private readonly createUserPort: CreateUserPort,
+    private readonly getUserPort: GetUserPort,
+    private readonly listUsersPort: ListUsersPort
   ) {}
 
   async createUser(req: Request, res: Response): Promise<void> {
@@ -21,7 +19,7 @@ export class UserController {
         return;
       }
 
-      const user = await this.createUserUseCase.execute({ name, email });
+      const user = await this.createUserPort.execute({ name, email });
       
       res.status(201).json(user);
     } catch (error) {
@@ -35,7 +33,7 @@ export class UserController {
     try {
       const { id } = req.params;
       
-      const user = await this.getUserUseCase.execute(id);
+      const user = await this.getUserPort.execute(id);
       
       if (!user) {
         res.status(404).json({ error: 'Usuário não encontrado' });
@@ -52,7 +50,7 @@ export class UserController {
 
   async listUsers(req: Request, res: Response): Promise<void> {
     try {
-      const result = await this.listUsersUseCase.execute();
+      const result = await this.listUsersPort.execute();
       res.json(result);
     } catch (error) {
       res.status(500).json({ 

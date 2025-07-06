@@ -1,14 +1,8 @@
 import { UserRepository } from '../../domain/repositories/UserRepository';
+import { GetUserPort, GetUserResponse } from '../ports/UserUseCasesPorts';
 
-export interface GetUserResponse {
-  id: string;
-  name: string;
-  email: string;
-  createdAt: Date;
-}
-
-export class GetUserUseCase {
-  constructor(private userRepository: UserRepository) {}
+export class GetUserUseCase implements GetUserPort {
+  constructor(private readonly userRepository: UserRepository) {}
 
   async execute(id: string): Promise<GetUserResponse | null> {
     const user = await this.userRepository.findById(id);

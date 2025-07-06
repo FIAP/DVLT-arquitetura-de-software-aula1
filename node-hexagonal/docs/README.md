@@ -6,7 +6,7 @@ Esta pasta contém a documentação completa da implementação da arquitetura h
 
 ### 📊 [Diagrama da Arquitetura](./architecture-diagram.md)
 Visualização completa da arquitetura hexagonal implementada, mostrando:
-- Atores condutores e conduzidos
+- Atores Primary e Secondary
 - Ports e adapters
 - Núcleo hexagonal com suas camadas
 - Fluxo de dados e dependências
@@ -14,7 +14,7 @@ Visualização completa da arquitetura hexagonal implementada, mostrando:
 ### 🔌 [Ports and Adapters](./ports-and-adapters.md)
 Detalhamento do padrão fundamental da arquitetura hexagonal:
 - Conceito de ports (interfaces)
-- Implementação de adapters (condutores e conduzidos)
+- Implementação de adapters (Primary e Secondary)
 - Exemplos práticos do projeto
 - Benefícios da separação
 
@@ -44,9 +44,9 @@ A arquitetura hexagonal (também conhecida como Ports and Adapters) foi implemen
 
 ### 🔧 Implementação
 - **Node.js + TypeScript**: Base tecnológica
-- **Express.js**: Framework web (adapter condutor)
+- **Express.js**: Framework web (Primary Adapter)
 - **Jest**: Framework de testes
-- **Repositório em Memória**: Adapter conduzido para persistência
+- **Repositório em Memória**: Secondary Adapter para persistência
 
 ### 📋 Casos de Uso Implementados
 - **Criar Usuário**: Validação e persistência
@@ -91,8 +91,8 @@ A arquitetura hexagonal (também conhecida como Ports and Adapters) foi implemen
 Para expandir a arquitetura, considere:
 
 1. **Implementar PostgreSQL**: Substitua o repositório em memória
-2. **Adicionar GraphQL**: Novo adapter condutor
-3. **Implementar Cache**: Adapter conduzido para Redis
+2. **Adicionar GraphQL**: Novo Primary Adapter
+3. **Implementar Cache**: Secondary Adapter para Redis
 4. **Adicionar Logs**: Cross-cutting concerns
 5. **Implementar Eventos**: Domain events e event sourcing
 

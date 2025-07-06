@@ -63,24 +63,25 @@ docs/
 - **Testes Automatizados**: Jest
 - **CLI Tools**: Linha de comando
 
-### 🟠 Adapters Condutores (Driving Adapters)
-- **UserController**: Converte HTTP para casos de uso
+### 🟠 Adapters Condutores (Primary Adapters)
+- **UserController**: Converte HTTP para Primary Ports (interfaces)
 - **Express Routes**: Mapeamento de rotas
 - **Express Server**: Servidor web
 
 ### 🟢 Núcleo Hexagonal (Core Business Logic)
 #### Application Layer
-- **CreateUserUseCase**: Orquestra criação de usuários
-- **GetUserUseCase**: Busca usuários por ID
-- **ListUsersUseCase**: Lista todos os usuários
+- **Primary Ports**: Interfaces para casos de uso (CreateUserPort, GetUserPort, ListUsersPort)
+- **CreateUserUseCase**: Implementa CreateUserPort - Orquestra criação de usuários
+- **GetUserUseCase**: Implementa GetUserPort - Busca usuários por ID
+- **ListUsersUseCase**: Implementa ListUsersPort - Lista todos os usuários
 
 #### Domain Layer
 - **User Entity**: Regras de negócio da entidade
 - **UserService**: Serviços de domínio
-- **UserRepository Port**: Interface de persistência
+- **UserRepository Port**: Interface de persistência (Secondary Port)
 
-### 🟠 Adapters Conduzidos (Driven Adapters)
-- **InMemoryUserRepository**: Persistência em memória
+### 🟠 Adapters Conduzidos (Secondary Adapters)
+- **InMemoryUserRepository**: Implementa UserRepository Port - Persistência em memória
 - **Futuros adapters**: Database, Cache, APIs externas
 
 ### 🟣 Atores Conduzidos (Driven Actors)
@@ -111,8 +112,11 @@ docs/
 ## 🎨 Padrões de Design Implementados
 
 ### 1. **Ports and Adapters**
-- Separação clara entre interfaces e implementações
-- Inversão de dependências
+- **Primary Ports**: Interfaces para entrada (CreateUserPort, GetUserPort, ListUsersPort)
+- **Secondary Ports**: Interfaces para saída (UserRepository)
+- **Primary Adapters**: Implementações de entrada (UserController)
+- **Secondary Adapters**: Implementações de saída (InMemoryUserRepository)
+- **IoC Completo**: Todos os adapters dependem de interfaces, não de implementações
 
 ### 2. **Repository Pattern**
 - Abstração do acesso a dados
@@ -122,9 +126,11 @@ docs/
 - Encapsulamento de regras de negócio
 - Orquestração de operações
 
-### 4. **Dependency Injection**
-- Inversão de controle
-- Facilita testes e manutenção
+### 4. **Dependency Injection & IoC**
+- **Inversão de Controle**: Primary Adapters dependem de Primary Ports
+- **Secondary Ports**: Domínio define interfaces, infraestrutura implementa
+- **Container DI**: Centralizasão da configuração de dependências
+- **Testabilidade**: Facilita mock e stub de dependências
 
 ### 5. **Factory Pattern**
 - Criação controlada de entidades
@@ -179,9 +185,10 @@ npm run test:coverage # Testes com cobertura
 ## 🎯 Conceitos Demonstrados
 
 ### 1. **Inversão de Dependências**
-- Domínio não depende de infraestrutura
-- Interfaces definidas no domínio
-- Implementações na infraestrutura
+- **Primary Ports**: Aplicação define interfaces, Primary Adapters dependem delas
+- **Secondary Ports**: Domínio define interfaces, Secondary Adapters implementam
+- **IoC Completo**: Infraestrutura depende de interfaces, não de implementações
+- **Testabilidade**: Facilita substituição e mocking
 
 ### 2. **Separação de Responsabilidades**
 - Cada camada tem sua função
@@ -206,12 +213,12 @@ npm run test:coverage # Testes com cobertura
    - Implementar connection pooling
 
 2. **Adicionar GraphQL**
-   - Criar novo adapter condutor
+   - Criar novo Primary Adapter
    - Manter mesmos casos de uso
    - Demonstrar flexibilidade
 
 3. **Implementar Cache**
-   - Adapter conduzido para Redis
+   - Secondary Adapter para Redis
    - Estratégias de cache
    - Invalidação automática
 

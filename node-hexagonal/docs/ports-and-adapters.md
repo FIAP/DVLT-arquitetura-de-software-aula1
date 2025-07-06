@@ -9,7 +9,29 @@ A arquitetura hexagonal é baseada no padrão **Ports and Adapters**, onde:
 
 ## Ports (Interfaces) no Projeto
 
-### 1. UserRepository Port
+### 1. Primary Ports (Input Ports)
+```typescript
+// src/application/ports/UserUseCasesPorts.ts
+export interface CreateUserPort {
+  execute(request: CreateUserRequest): Promise<CreateUserResponse>;
+}
+
+export interface GetUserPort {
+  execute(id: string): Promise<GetUserResponse | null>;
+}
+
+export interface ListUsersPort {
+  execute(): Promise<ListUsersResponse>;
+}
+```
+
+**Características:**
+- Definem como a aplicação pode ser usada
+- Localizados na camada de aplicação
+- Implementados pelos casos de uso
+- Permitem IoC completo nos Primary Adapters
+
+### 2. Secondary Ports (Output Ports)
 ```typescript
 // src/domain/repositories/UserRepository.ts
 interface UserRepository {
@@ -35,6 +57,12 @@ interface UserRepository {
 ```typescript
 // src/infrastructure/web/controllers/UserController.ts
 class UserController {
+  constructor(
+    private readonly createUserPort: CreateUserPort,  // ← Primary Port (Interface)
+    private readonly getUserPort: GetUserPort,        // ← Primary Port (Interface)
+    private readonly listUsersPort: ListUsersPort     // ← Primary Port (Interface)
+  ) {}
+
   async createUser(req: Request, res: Response): Promise<void>
   async getUser(req: Request, res: Response): Promise<void>
   async listUsers(req: Request, res: Response): Promise<void>
@@ -42,9 +70,10 @@ class UserController {
 ```
 
 **Responsabilidades:**
-- Adapta requisições HTTP para chamadas de casos de uso
-- Converte respostas dos casos de uso em responses HTTP
+- Adapta requisições HTTP para chamadas dos Primary Ports
+- Converte respostas dos Primary Ports em responses HTTP
 - Trata erros e status codes adequados
+- **IoC**: Depende de interfaces, não de implementações
 
 #### Express Server
 ```typescript
@@ -133,13 +162,13 @@ class PostgreSQLUserRepository implements UserRepository {
 // Novo: GraphQLController
 class GraphQLController {
   constructor(
-    private createUserUseCase: CreateUserUseCase,
-    private getUserUseCase: GetUserUseCase,
-    private listUsersUseCase: ListUsersUseCase
+    private readonly createUserPort: CreateUserPort,  // ← Primary Port (Interface)
+    private readonly getUserPort: GetUserPort,        // ← Primary Port (Interface)
+    private readonly listUsersPort: ListUsersPort     // ← Primary Port (Interface)
   ) {}
   
   async createUser(args: CreateUserArgs): Promise<UserResponse> {
-    return await this.createUserUseCase.execute(args);
+    return await this.createUserPort.execute(args);  // ← Usando interface
   }
 }
 ```
