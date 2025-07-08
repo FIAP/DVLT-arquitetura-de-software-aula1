@@ -1,0 +1,170 @@
+### Arquivo de Requisições HTTP para teste da API
+### Use este arquivo no VS Code com a extensão REST Client
+### ou qualquer cliente HTTP que suporte este formato
+
+@baseUrl = http://localhost:3000
+@contentType = application/json
+
+### ==============================================
+### ENDPOINTS DE SISTEMA
+### ==============================================
+
+### Verificar saúde da aplicação
+GET {{baseUrl}}/health
+
+### Obter informações sobre a arquitetura
+GET {{baseUrl}}/api/info
+
+### ==============================================
+### ENDPOINTS DE USUÁRIOS
+### ==============================================
+
+### Criar novo usuário
+POST {{baseUrl}}/api/users
+Content-Type: {{contentType}}
+
+{
+  "name": "João Silva",
+  "email": "joao.silva@email.com",
+  "password": "senha123456"
+}
+
+### Criar segundo usuário para testes
+POST {{baseUrl}}/api/users
+Content-Type: {{contentType}}
+
+{
+  "name": "Maria Santos",
+  "email": "maria.santos@email.com",
+  "password": "minhasenha123"
+}
+
+### Criar terceiro usuário para testes
+POST {{baseUrl}}/api/users
+Content-Type: {{contentType}}
+
+{
+  "name": "Carlos Oliveira",
+  "email": "carlos.oliveira@email.com",
+  "password": "senhasegura456"
+}
+
+### Listar todos os usuários
+GET {{baseUrl}}/api/users
+
+### Buscar usuário por ID (substitua pelo ID real retornado na criação)
+GET {{baseUrl}}/api/users/SUBSTITUA_PELO_ID_REAL
+
+### Atualizar usuário (substitua pelo ID real)
+PUT {{baseUrl}}/api/users/SUBSTITUA_PELO_ID_REAL
+Content-Type: {{contentType}}
+
+{
+  "name": "João Silva Santos"
+}
+
+### Atualizar email do usuário (substitua pelo ID real)
+PUT {{baseUrl}}/api/users/SUBSTITUA_PELO_ID_REAL
+Content-Type: {{contentType}}
+
+{
+  "email": "joao.santos@email.com"
+}
+
+### Atualizar nome e senha do usuário (substitua pelo ID real)
+PUT {{baseUrl}}/api/users/SUBSTITUA_PELO_ID_REAL
+Content-Type: {{contentType}}
+
+{
+  "name": "João Santos Silva",
+  "password": "novasenha789"
+}
+
+### Deletar usuário (substitua pelo ID real)
+DELETE {{baseUrl}}/api/users/SUBSTITUA_PELO_ID_REAL
+
+### ==============================================
+### TESTES DE VALIDAÇÃO (Casos de Erro)
+### ==============================================
+
+### Tentar criar usuário com nome muito curto
+POST {{baseUrl}}/api/users
+Content-Type: {{contentType}}
+
+{
+  "name": "A",
+  "email": "teste@email.com",
+  "password": "senha123"
+}
+
+### Tentar criar usuário com email inválido
+POST {{baseUrl}}/api/users
+Content-Type: {{contentType}}
+
+{
+  "name": "Teste Usuario",
+  "email": "email-invalido",
+  "password": "senha123"
+}
+
+### Tentar criar usuário com senha muito curta
+POST {{baseUrl}}/api/users
+Content-Type: {{contentType}}
+
+{
+  "name": "Teste Usuario",
+  "email": "teste2@email.com",
+  "password": "123"
+}
+
+### Tentar criar usuário sem dados obrigatórios
+POST {{baseUrl}}/api/users
+Content-Type: {{contentType}}
+
+{
+  "name": ""
+}
+
+### Tentar criar usuário com email duplicado
+POST {{baseUrl}}/api/users
+Content-Type: {{contentType}}
+
+{
+  "name": "Usuario Duplicado",
+  "email": "joao.silva@email.com",
+  "password": "senha123456"
+}
+
+### Buscar usuário com ID inexistente
+GET {{baseUrl}}/api/users/id_inexistente_123
+
+### Tentar atualizar usuário inexistente
+PUT {{baseUrl}}/api/users/id_inexistente_123
+Content-Type: {{contentType}}
+
+{
+  "name": "Nome Atualizado"
+}
+
+### Tentar deletar usuário inexistente
+DELETE {{baseUrl}}/api/users/id_inexistente_123
+
+### ==============================================
+### SEQUÊNCIA DE TESTE COMPLETA
+### ==============================================
+
+### 1. Verificar se a aplicação está funcionando
+GET {{baseUrl}}/health
+
+### 2. Criar um usuário de teste
+POST {{baseUrl}}/api/users
+Content-Type: {{contentType}}
+
+{
+  "name": "Usuario Teste",
+  "email": "usuario.teste@email.com",
+  "password": "senhateste123"
+}
+
+### 3. Listar usuários para ver o criado
+GET {{baseUrl}}/api/users

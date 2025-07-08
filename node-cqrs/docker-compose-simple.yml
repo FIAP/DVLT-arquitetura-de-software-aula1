@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: cqrs-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      # Forçar MongoDB sem autenticação
+      MONGO_INITDB_ROOT_USERNAME: ""
+      MONGO_INITDB_ROOT_PASSWORD: ""
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - cqrs-network
+    command: ["mongod", "--noauth"]
+    # MongoDB completamente sem autenticação para desenvolvimento
+
+  postgres:
+    image: postgres:15
+    container_name: cqrs-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: cqrs_write
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - cqrs-network
+
+volumes:
+  mongodb_data:
+  postgres_data:
+
+networks:
+  cqrs-network:
+    driver: bridge 

@@ -1,0 +1,33 @@
+{
+  "name": "node-cqrs-demo",
+  "version": "1.0.0",
+  "description": "Demonstração do padrão CQRS com Node.js, MongoDB e PostgreSQL",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:simple": "docker-compose -f docker-compose-simple.yml up -d",
+    "docker:simple:down": "docker-compose -f docker-compose-simple.yml down",
+    "setup": "node setup.js",
+    "quick-setup": "node quick-setup.js",
+    "test": "node test-cqrs.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.5.0",
+    "pg": "^8.11.3",
+    "uuid": "^9.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "joi": "^17.9.2",
+    "axios": "^1.5.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": ["cqrs", "nodejs", "mongodb", "postgresql", "event-sourcing"],
+  "author": "Demo CQRS",
+  "license": "MIT"
+} 

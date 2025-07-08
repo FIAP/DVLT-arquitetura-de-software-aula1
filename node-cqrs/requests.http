@@ -1,0 +1,321 @@
+###
+# CQRS Demo - Requests HTTP
+# Demonstração completa do fluxo de Commands e Queries
+###
+
+### Variables
+@baseUrl = http://localhost:3000
+@productId = {{createProduct.response.body.data.id}}
+
+###
+# ===========================================
+# HEALTH CHECKS E DOCUMENTAÇÃO
+# ===========================================
+
+### Health Check
+GET {{baseUrl}}/health
+
+### API Info
+GET {{baseUrl}}/
+
+### Documentação da API
+GET {{baseUrl}}/docs
+
+###
+# ===========================================
+# COMMANDS (WRITE) - Operações de Escrita
+# ===========================================
+
+### 1. Criar Produto (Command)
+# @name createProduct
+POST {{baseUrl}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Notebook Gamer Dell",
+  "description": "Notebook para jogos com placa de vídeo dedicada",
+  "price": 4500.00,
+  "stockQuantity": 10
+}
+
+### 2. Criar Segundo Produto
+POST {{baseUrl}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Mouse Logitech MX Master 3",
+  "description": "Mouse sem fio para produtividade",
+  "price": 350.00,
+  "stockQuantity": 25
+}
+
+### 3. Criar Terceiro Produto
+POST {{baseUrl}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Teclado Mecânico Corsair K95",
+  "description": "Teclado mecânico RGB para gamers",
+  "price": 800.00,
+  "stockQuantity": 15
+}
+
+### 4. Criar Produto Sem Estoque
+POST {{baseUrl}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Monitor 4K Samsung",
+  "description": "Monitor 4K 32 polegadas",
+  "price": 2200.00,
+  "stockQuantity": 0
+}
+
+### 5. Atualizar Produto (Command)
+# Substitua {productId} por um ID real retornado na criação
+PUT {{baseUrl}}/api/products/{{productId}}
+Content-Type: application/json
+
+{
+  "price": 4200.00,
+  "stockQuantity": 8,
+  "description": "Notebook gamer Dell com desconto especial"
+}
+
+### 6. Deletar Produto (Command)
+# Substitua {productId} por um ID real
+DELETE {{baseUrl}}/api/products/{{productId}}
+
+### 7. Teste de Validação - Produto Inválido
+POST {{baseUrl}}/api/products
+Content-Type: application/json
+
+{
+  "name": "A",
+  "price": -100,
+  "stockQuantity": -5
+}
+
+###
+# ===========================================
+# QUERIES (READ) - Operações de Leitura
+# ===========================================
+
+### 1. Listar Todos os Produtos (Query)
+GET {{baseUrl}}/api/products
+
+### 2. Listar Produtos com Paginação
+GET {{baseUrl}}/api/products?page=1&limit=2
+
+### 3. Listar Produtos Ordenados por Preço (Crescente)
+GET {{baseUrl}}/api/products?sortBy=price&sortOrder=asc
+
+### 4. Listar Produtos Ordenados por Nome
+GET {{baseUrl}}/api/products?sortBy=name&sortOrder=asc
+
+### 5. Buscar Produto por ID (Query)
+# Substitua {productId} por um ID real
+GET {{baseUrl}}/api/products/{{productId}}
+
+### 6. Pesquisar Produtos por Texto (Query)
+GET {{baseUrl}}/api/products/search/gaming
+
+### 7. Pesquisar por "mouse"
+GET {{baseUrl}}/api/products/search/mouse
+
+### 8. Pesquisar por "dell"
+GET {{baseUrl}}/api/products/search/dell
+
+### 9. Buscar Produtos por Faixa de Preço (Query)
+GET {{baseUrl}}/api/products/price-range/300/1000
+
+### 10. Buscar Produtos Caros
+GET {{baseUrl}}/api/products/price-range/2000/5000
+
+### 11. Buscar Produtos Baratos
+GET {{baseUrl}}/api/products/price-range/0/500
+
+### 12. Produtos em Estoque (Query)
+GET {{baseUrl}}/api/products/in-stock/list
+
+### 13. Produtos em Estoque Ordenados por Quantidade
+GET {{baseUrl}}/api/products/in-stock/list?sortBy=stockQuantity&sortOrder=desc
+
+### 14. Estatísticas dos Produtos (Query)
+GET {{baseUrl}}/api/products/stats/overview
+
+###
+# ===========================================
+# ADMIN - Event Store e Sincronização
+# ===========================================
+
+### 1. Listar Todos os Eventos
+GET {{baseUrl}}/api/products/admin/events
+
+### 2. Eventos de um Produto Específico
+# Substitua {productId} por um ID real
+GET {{baseUrl}}/api/products/admin/events/{{productId}}
+
+### 3. Sincronizar Dados Manualmente
+POST {{baseUrl}}/api/products/admin/sync
+
+### 4. Replay de Eventos
+POST {{baseUrl}}/api/products/admin/replay
+
+###
+# ===========================================
+# TESTE DE FLUXO COMPLETO CQRS
+# ===========================================
+
+### FLUXO 1: Criar → Ler → Atualizar → Ler → Ver Eventos
+
+# 1. Criar produto
+POST {{baseUrl}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Smartphone Samsung Galaxy S24",
+  "description": "Smartphone Android premium",
+  "price": 3500.00,
+  "stockQuantity": 20
+}
+
+### 2. Aguardar sincronização (executar após 2-3 segundos)
+GET {{baseUrl}}/api/products
+
+### 3. Atualizar o produto criado
+# Copie o ID do produto criado acima
+PUT {{baseUrl}}/api/products/{COLE_O_ID_AQUI}
+Content-Type: application/json
+
+{
+  "price": 3200.00,
+  "stockQuantity": 18,
+  "description": "Smartphone Samsung Galaxy S24 - Promoção especial!"
+}
+
+### 4. Verificar atualização
+GET {{baseUrl}}/api/products/{COLE_O_ID_AQUI}
+
+### 5. Ver eventos do produto
+GET {{baseUrl}}/api/products/admin/events/{COLE_O_ID_AQUI}
+
+###
+# ===========================================
+# TESTE DE PERFORMANCE E CARGA
+# ===========================================
+
+### Criar Múltiplos Produtos (Execute várias vezes)
+POST {{baseUrl}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Produto Teste {{$randomInt}}",
+  "description": "Produto criado para teste de carga",
+  "price": {{$randomInt 100 1000}},
+  "stockQuantity": {{$randomInt 1 50}}
+}
+
+###
+# ===========================================
+# TESTE DE CASOS EXTREMOS
+# ===========================================
+
+### Produto com Preço Zero
+POST {{baseUrl}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Produto Gratuito",
+  "description": "Produto de demonstração",
+  "price": 0,
+  "stockQuantity": 100
+}
+
+### Produto com Estoque Zero
+POST {{baseUrl}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Produto Esgotado",
+  "description": "Produto temporariamente esgotado",
+  "price": 199.99,
+  "stockQuantity": 0
+}
+
+### Buscar Produto Inexistente
+GET {{baseUrl}}/api/products/00000000-0000-0000-0000-000000000000
+
+### Atualizar Produto Inexistente
+PUT {{baseUrl}}/api/products/00000000-0000-0000-0000-000000000000
+Content-Type: application/json
+
+{
+  "price": 999.99
+}
+
+### Deletar Produto Inexistente
+DELETE {{baseUrl}}/api/products/00000000-0000-0000-0000-000000000000
+
+###
+# ===========================================
+# DEMONSTRAÇÃO CQRS
+# ===========================================
+
+### Demonstrar Separação Command/Query
+
+# 1. Command: Criar produto
+POST {{baseUrl}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Produto CQRS Demo",
+  "description": "Demonstração da separação entre Command e Query",
+  "price": 1500.00,
+  "stockQuantity": 5
+}
+
+### 2. Query: Verificar se foi criado na base de leitura
+GET {{baseUrl}}/api/products/search/CQRS
+
+### 3. Command: Atualizar produto
+# Use o ID retornado acima
+PUT {{baseUrl}}/api/products/{COLE_O_ID_AQUI}
+Content-Type: application/json
+
+{
+  "price": 1200.00,
+  "description": "Produto CQRS Demo - ATUALIZADO via Command"
+}
+
+### 4. Query: Verificar atualização na base de leitura
+GET {{baseUrl}}/api/products/{COLE_O_ID_AQUI}
+
+### 5. Ver histórico de eventos (Event Sourcing)
+GET {{baseUrl}}/api/products/admin/events/{COLE_O_ID_AQUI}
+
+### 6. Demonstrar que Query e Command usam bases diferentes
+# Este endpoint mostra estatísticas calculadas no MongoDB (base de leitura)
+GET {{baseUrl}}/api/products/stats/overview
+
+###
+# ===========================================
+# INSTRUÇÕES DE USO
+# ===========================================
+
+### Para testar o fluxo completo:
+# 1. Execute os health checks primeiro
+# 2. Execute os Commands (POST, PUT, DELETE) - escrevem no PostgreSQL
+# 3. Aguarde 1-2 segundos para sincronização
+# 4. Execute as Queries (GET) - leem do MongoDB
+# 5. Verifique os eventos para ver o Event Sourcing
+# 6. Use as rotas admin para sync manual se necessário
+
+### Observações importantes:
+# - Commands modificam dados no PostgreSQL e geram eventos
+# - Queries consultam dados otimizados no MongoDB
+# - A sincronização é assíncrona (pode demorar 1-2 segundos)
+# - Todos os eventos ficam registrados no Event Store
+# - Use as rotas admin para debug e administração
+
+### 

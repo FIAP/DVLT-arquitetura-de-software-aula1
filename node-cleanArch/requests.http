@@ -1,0 +1,97 @@
+### Health Check
+GET http://localhost:3000/health
+
+###
+
+### Criar Usuário - Exemplo 1
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "name": "João Silva",
+  "email": "joao.silva@email.com"
+}
+
+###
+
+### Criar Usuário - Exemplo 2
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "name": "Maria Santos",
+  "email": "maria.santos@email.com"
+}
+
+###
+
+### Criar Usuário - Exemplo 3
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "name": "Pedro Oliveira",
+  "email": "pedro.oliveira@email.com"
+}
+
+###
+
+### Listar Todos os Usuários
+GET http://localhost:3000/users
+
+###
+
+### Buscar Usuário por ID (substitua pelo ID real retornado na criação do usuário)
+GET http://localhost:3000/users/exemplo-de-uuid-aqui
+
+###
+
+### Exemplos de Teste de Validação
+
+### Tentar criar usuário com email inválido
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "name": "Teste Usuário",
+  "email": "email-invalido"
+}
+
+###
+
+### Tentar criar usuário com nome muito curto
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "name": "A",
+  "email": "teste@email.com"
+}
+
+###
+
+### Tentar criar usuário sem dados obrigatórios
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "name": "Teste Usuário"
+}
+
+###
+
+### Tentar criar usuário com email duplicado (execute após criar o primeiro usuário)
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "name": "Outro Usuário",
+  "email": "joao.silva@email.com"
+}
+
+###
+
+### Buscar usuário com ID inexistente
+GET http://localhost:3000/users/id-inexistente
+
+### 
